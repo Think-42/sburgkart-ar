@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Pelvis — Prototype</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #121212;
+            --text: #e0e0e0;
+            --accent: orange;
+            --primary-font: 'Inter', system-ui, sans-serif;
+            --accent-font: 'Space Grotesk', system-ui, sans-serif;
+            --bone: #f0e6d2;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--primary-font);
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .ar-wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            flex: 1;
+            width: 100%;
+        }
+
+        .ar-header {
+            margin-bottom: 30px;
+        }
+
+        .ar-header h1 {
+            font-family: var(--accent-font);
+            font-size: 2em;
+            margin: 0 0 10px;
+            letter-spacing: 0.02em;
+        }
+
+        .ar-header p {
+            opacity: 0.7;
+            max-width: 55ch;
+            margin: 0 auto 20px;
+            line-height: 1.5;
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 60vh;
+            min-height: 380px;
+            background: radial-gradient(circle at center, #1e1e1e 0%, #0a0a0a 100%);
+            border-radius: 14px;
+            --poster-color: transparent;
+        }
+
+        .ar-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #121212;
+            font-family: var(--accent-font);
+            font-weight: 700;
+            font-size: 1.1em;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 30px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .ar-button:hover {
+            background: #ff8c00;
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .ar-button-dot {
+            width: 8px;
+            height: 8px;
+            background: #121212;
+            border-radius: 50%;
+            animation: pulse 1.6s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .qr-panel {
+            margin-top: 40px;
+            padding: 24px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            text-align: left;
+        }
+
+        .qr-panel canvas, .qr-panel img {
+            width: 140px;
+            height: 140px;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .qr-panel-text h3 {
+            font-family: var(--accent-font);
+            color: var(--accent);
+            margin: 0 0 8px;
+            font-size: 1.2em;
+            letter-spacing: 0.05em;
+        }
+
+        .qr-panel-text p {
+            margin: 0;
+            font-size: 0.95em;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .qr-url {
+            display: block;
+            margin-top: 10px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.85em;
+            color: var(--accent);
+            word-break: break-all;
+        }
+
+        .hint {
+            margin-top: 30px;
+            font-size: 0.85em;
+            opacity: 0.55;
+            line-height: 1.6;
+        }
+
+        .missing {
+            color: #ff6b6b;
+            margin-top: 16px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .qr-panel { display: none; }
+            .ar-header h1 { font-size: 1.5em; }
+            model-viewer { height: 70vh; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ar-wrap">
+        <div class="ar-header">
+            <h1>PELVIS · AR PROTOTYPE</h1>
+            <p>Open this page on a phone, tap "View in your space" and the pelvis lands on the table — at anatomical scale, as if a patient were lying there. A quick way to sketch what a C-arm or CT might show.</p>
+        </div>
+
+        <div style="position: relative;">
+            <model-viewer
+                id="viewer"
+                src="models/pelvis.glb"
+                ios-src="models/pelvis.usdz"
+                alt="Human pelvis 3D model"
+                ar
+                ar-modes="webxr scene-viewer quick-look"
+                ar-placement="floor"
+                ar-scale="fixed"
+                camera-controls
+                touch-action="pan-y"
+                auto-rotate
+                auto-rotate-delay="3000"
+                rotation-per-second="15deg"
+                shadow-intensity="1.2"
+                shadow-softness="0.8"
+                environment-image="neutral"
+                exposure="1.0"
+                interaction-prompt="auto"
+                interaction-prompt-style="basic"
+                loading="eager">
+
+                <button slot="ar-button" class="ar-button">
+                    <span class="ar-button-dot"></span>
+                    View in your space
+                </button>
+
+                <div slot="poster" style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-family:var(--accent-font);">
+                    loading model…
+                </div>
+            </model-viewer>
+        </div>
+
+        <div id="missing-model" class="missing" style="display:none;">
+            No <code>pelvis.glb</code> found in <code>/models/</code> yet — drop a model in and reload.
+        </div>
+
+        <div class="qr-panel">
+            <canvas id="qr"></canvas>
+            <div class="qr-panel-text">
+                <h3>SCAN TO OPEN ON PHONE</h3>
+                <p>AR only runs on a phone or tablet. Scan with your camera, then tap the orange button.</p>
+                <span class="qr-url" id="qr-url"></span>
+            </div>
+        </div>
+
+        <div class="hint">
+            iOS uses Quick Look (.usdz) · Android uses Scene Viewer / WebXR (.glb) · desktop shows a 3D viewer
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        const url = window.location.href;
+        document.getElementById('qr-url').textContent = url;
+        QRCode.toCanvas(document.getElementById('qr'), url, {
+            width: 140,
+            margin: 1,
+            color: { dark: '#121212', light: '#ffffff' }
+        });
+
+        const viewer = document.getElementById('viewer');
+        viewer.addEventListener('error', (e) => {
+            if (e.detail && e.detail.type === 'loadfailure') {
+                document.getElementById('missing-model').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
